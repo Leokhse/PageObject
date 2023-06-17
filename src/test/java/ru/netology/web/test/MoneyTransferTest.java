@@ -1,7 +1,7 @@
 package ru.netology.web.test;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
 import ru.netology.web.data.DataHelper;
 import ru.netology.web.page.DashboardPage;
 import ru.netology.web.page.LoginPage;
@@ -12,32 +12,31 @@ import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MoneyTransferTest {
+  private LoginPage loginPage;
+  private DashboardPage dashboardPage;
+  private TransferPage transferPage;
+
+  @BeforeEach
+  void setUp() {
+    open("http://localhost:9999");
+    loginPage = new LoginPage();
+    DataHelper.AuthInfo authInfo = DataHelper.getAuthInfo();
+    VerificationPage verificationPage = loginPage.validLogin(authInfo);
+    DataHelper.VerificationCode verificationCode = DataHelper.getVerificationCode();
+    dashboardPage = verificationPage.validVerify(verificationCode);
+  }
 
   @Test
   void shouldTransferMoneyBetweenOwnCards() {
-    open("http://localhost:9999");
-    LoginPage loginPage = new LoginPage();
-    DataHelper.AuthInfo authInfo = DataHelper.getAuthInfo();
-    VerificationPage verificationPage = loginPage.validLogin(authInfo);
-    DataHelper.VerificationCode verificationCode = DataHelper.getVerificationCodeFor(authInfo);
-    DashboardPage dashboardPage = verificationPage.validVerify(verificationCode);
-
     int initialBalanceFirstCard = dashboardPage.getCardBalance(0);
     int initialBalanceSecondCard = dashboardPage.getCardBalance(1);
 
-    String sourceCardNumber = "5559 0000 0000 0002";
-    String destinationCardNumber = "5559 0000 0000 0001";
+    String sourceCardNumber = DataHelper.getSourceCardNumber();
+    String destinationCardNumber = DataHelper.getDestinationCardNumber();
     int transferAmount = 1000;
 
-    dashboardPage.clickCardDepositButton(0);
-    TransferPage transferPage = new TransferPage();
-    transferPage.clearAndFillField("amount", "");
-    transferPage.clearAndFillField("from", "");
-    transferPage.fillFieldWithKeyboardShortcut("amount", Keys.chord(Keys.SHIFT, Keys.HOME) + Keys.BACK_SPACE);
-    transferPage.fillFieldWithKeyboardShortcut("from", Keys.chord(Keys.SHIFT, Keys.HOME) + Keys.BACK_SPACE);
-    transferPage.fillField("amount", String.valueOf(transferAmount));
-    transferPage.fillField("from", sourceCardNumber);
-    transferPage.submitTransfer();
+    transferPage = dashboardPage.clickCardDepositButton(0);
+    dashboardPage = transferPage.transferMoney(sourceCardNumber, transferAmount, destinationCardNumber);
 
     int expectedBalanceFirstCard = initialBalanceFirstCard + transferAmount;
     int expectedBalanceSecondCard = initialBalanceSecondCard - transferAmount;
@@ -48,23 +47,17 @@ public class MoneyTransferTest {
     assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard);
     assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard);
 
-    sourceCardNumber = "5559 0000 0000 0001";
-    destinationCardNumber = "5559 0000 0000 0002";
+    sourceCardNumber = DataHelper.getDestinationCardNumber();
+    destinationCardNumber = DataHelper.getSourceCardNumber();
 
-    int updatedInitialBalanceFirstCard = dashboardPage.getCardBalance(0);
-    int updatedInitialBalanceSecondCard = dashboardPage.getCardBalance(1);
+    initialBalanceFirstCard = dashboardPage.getCardBalance(0);
+    initialBalanceSecondCard = dashboardPage.getCardBalance(1);
 
-    dashboardPage.clickCardDepositButton(1);
-    transferPage.clearAndFillField("amount", "");
-    transferPage.clearAndFillField("from", "");
-    transferPage.fillFieldWithKeyboardShortcut("amount", Keys.chord(Keys.SHIFT, Keys.HOME) + Keys.BACK_SPACE);
-    transferPage.fillFieldWithKeyboardShortcut("from", Keys.chord(Keys.SHIFT, Keys.HOME) + Keys.BACK_SPACE);
-    transferPage.fillField("amount", String.valueOf(transferAmount));
-    transferPage.fillField("from", sourceCardNumber);
-    transferPage.submitTransfer();
+    transferPage = dashboardPage.clickCardDepositButton(1);
+    dashboardPage = transferPage.transferMoney(sourceCardNumber, transferAmount, destinationCardNumber);
 
-    expectedBalanceFirstCard = updatedInitialBalanceFirstCard - transferAmount;
-    expectedBalanceSecondCard = updatedInitialBalanceSecondCard + transferAmount;
+    expectedBalanceFirstCard = initialBalanceFirstCard - transferAmount;
+    expectedBalanceSecondCard = initialBalanceSecondCard + transferAmount;
 
     actualBalanceFirstCard = dashboardPage.getCardBalance(0);
     actualBalanceSecondCard = dashboardPage.getCardBalance(1);

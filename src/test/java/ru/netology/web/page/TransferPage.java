@@ -1,6 +1,7 @@
 package ru.netology.web.page;
 
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.Keys;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
@@ -16,17 +17,11 @@ public class TransferPage {
 
     public void clearAndFillField(String field, String value) {
         if (field.equals("amount")) {
-            amountField.sendKeys("\uE008", "\uE012", value);
+            amountField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+            amountField.setValue(value);
         } else if (field.equals("from")) {
-            fromField.sendKeys("\uE008", "\uE012", value);
-        }
-    }
-
-    public void fillFieldWithKeyboardShortcut(String field, String value) {
-        if (field.equals("amount")) {
-            amountField.sendKeys(value);
-        } else if (field.equals("from")) {
-            fromField.sendKeys(value);
+            fromField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+            fromField.setValue(value);
         }
     }
 
@@ -45,8 +40,6 @@ public class TransferPage {
     public DashboardPage transferMoney(String sourceCardNumber, int amount, String destinationCardNumber) {
         clearAndFillField("amount", "");
         clearAndFillField("from", "");
-        fillFieldWithKeyboardShortcut("amount", "\uE008" + "\uE012");
-        fillFieldWithKeyboardShortcut("from", "\uE008" + "\uE012");
         fillField("amount", String.valueOf(amount));
         fillField("from", sourceCardNumber);
         submitTransfer();
