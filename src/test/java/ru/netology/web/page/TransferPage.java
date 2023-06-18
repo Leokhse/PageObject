@@ -16,28 +16,29 @@ public class TransferPage {
     }
 
     public void clearAndFillField(String field, String value) {
-        if (field.equals("amount")) {
-            amountField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-            amountField.setValue(value);
-        } else if (field.equals("from")) {
-            fromField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
-            fromField.setValue(value);
-        }
+        getFieldElement(field).sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        getFieldElement(field).setValue(value);
     }
 
     public void fillField(String field, String value) {
-        if (field.equals("amount")) {
-            amountField.setValue(value);
-        } else if (field.equals("from")) {
-            fromField.setValue(value);
-        }
+        getFieldElement(field).setValue(value);
     }
 
     public void submitTransfer() {
         transferButton.click();
     }
 
-    public DashboardPage transferMoney(String sourceCardNumber, int amount, String destinationCardNumber) {
+    private SelenideElement getFieldElement(String field) {
+        switch (field) {
+            case "amount":
+                return amountField;
+            case "from":
+                return fromField;
+        }
+        return null;
+    }
+
+    public DashboardPage transferMoney(String sourceCardNumber, int amount) {
         clearAndFillField("amount", "");
         clearAndFillField("from", "");
         fillField("amount", String.valueOf(amount));

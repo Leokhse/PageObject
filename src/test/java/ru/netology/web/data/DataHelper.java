@@ -37,11 +37,4 @@ public class DataHelper {
   public static Card getSecondCard() {
     return new Card("5559 0000 0000 0002", 10000);
   }
-  public static String getSourceCardNumber() {
-    return getSecondCard().getNumber();
-  }
-
-  public static String getDestinationCardNumber() {
-    return getFirstCard().getNumber();
-  }
 }

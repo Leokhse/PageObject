@@ -31,12 +31,11 @@ public class MoneyTransferTest {
     int initialBalanceFirstCard = dashboardPage.getCardBalance(0);
     int initialBalanceSecondCard = dashboardPage.getCardBalance(1);
 
-    String sourceCardNumber = DataHelper.getSourceCardNumber();
-    String destinationCardNumber = DataHelper.getDestinationCardNumber();
+    String sourceCardNumber = DataHelper.getSecondCard().getNumber();
     int transferAmount = 1000;
 
     transferPage = dashboardPage.clickCardDepositButton(0);
-    dashboardPage = transferPage.transferMoney(sourceCardNumber, transferAmount, destinationCardNumber);
+    dashboardPage = transferPage.transferMoney(sourceCardNumber, transferAmount);
 
     int expectedBalanceFirstCard = initialBalanceFirstCard + transferAmount;
     int expectedBalanceSecondCard = initialBalanceSecondCard - transferAmount;
@@ -47,14 +46,13 @@ public class MoneyTransferTest {
     assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard);
     assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard);
 
-    sourceCardNumber = DataHelper.getDestinationCardNumber();
-    destinationCardNumber = DataHelper.getSourceCardNumber();
+    sourceCardNumber = DataHelper.getFirstCard().getNumber();
 
     initialBalanceFirstCard = dashboardPage.getCardBalance(0);
     initialBalanceSecondCard = dashboardPage.getCardBalance(1);
 
     transferPage = dashboardPage.clickCardDepositButton(1);
-    dashboardPage = transferPage.transferMoney(sourceCardNumber, transferAmount, destinationCardNumber);
+    dashboardPage = transferPage.transferMoney(sourceCardNumber, transferAmount);
 
     expectedBalanceFirstCard = initialBalanceFirstCard - transferAmount;
     expectedBalanceSecondCard = initialBalanceSecondCard + transferAmount;

@@ -1,7 +1,6 @@
 package ru.netology.web.page;
 
 import com.codeborne.selenide.ElementsCollection;
-import ru.netology.web.data.DataHelper;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$$;
@@ -29,10 +28,4 @@ public class DashboardPage {
     return new TransferPage();
   }
 
-  public void verifyCardBalance(int index, int expectedBalance) {
-    int actualBalance = getCardBalance(index);
-    if (actualBalance != expectedBalance) {
-      throw new AssertionError("Expected card balance: " + expectedBalance + ", but found: " + actualBalance);
-    }
-  }
 }
