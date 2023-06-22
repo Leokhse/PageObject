@@ -20,15 +20,12 @@ public class TransferPage {
         fromField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
     }
 
-    public void fillField(String field, String value) {
-        switch (field) {
-            case "amount":
-                amountField.setValue(value);
-                break;
-            case "from":
-                fromField.setValue(value);
-                break;
-        }
+    public void fillAmountField(String value) {
+        amountField.setValue(value);
+    }
+
+    public void fillCardNumberField(String value) {
+        fromField.setValue(value);
     }
 
     public void submitTransfer() {
@@ -37,8 +34,8 @@ public class TransferPage {
 
     public DashboardPage transferMoney(String sourceCardNumber, int amount) {
         clearFields();
-        fillField("amount", String.valueOf(amount));
-        fillField("from", sourceCardNumber);
+        fillAmountField(String.valueOf(amount));
+        fillCardNumberField(sourceCardNumber);
         submitTransfer();
         return new DashboardPage();
     }
